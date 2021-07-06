@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'singleton'
+require 'redcarpet'
 require_relative './sanitize_config'
 
 class Formatter
@@ -38,11 +39,69 @@ class Formatter
     html = "RT @#{prepend_reblog} #{html}" if prepend_reblog
     html = encode_and_link_urls(html, linkable_accounts)
     html = encode_custom_emojis(html, status.emojis, options[:autoplay]) if options[:custom_emojify]
-    html = simple_format(html, {}, sanitize: false)
+
+    ###########
+    #
+    # Here starts the stuff we only want to have on our instance
+    # (except we want to have the links to be parsed beforehand)
+    #
+    ###########
+
+    markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML,
+                                       autolink: true,
+                                       lax_spacing: true,
+                                       fenced_code_blocks: true,
+                                       disable_indented_code_blocks: true,
+                                       underline: true,
+                                       footnotes: true,
+                                       no_intra_emphasis: true,
+                                       filter_html: false,
+                                       escape_html: false,
+                                       )
+
+    # render markdown:
+    html = markdown.render(html)
+
+    # remove space between leading paragraph and following bullet point list, so no <p></p> gets inserted there:
+    html = html.gsub("</p>\n\n<ul>", "</p><ul>")
+
+    # add line breaks:
+    html = html.gsub("\n\n", "<p></p>")
+    html = html.gsub("\n", "<br/>")
     html = html.delete("\n")
+    # ^ This turns \n\n into <p></p><p></p>
+    #   and          \n into <br>
+    # html = simple_format(html, {}, sanitize: false)  # <-- the old code for that purpose
+
+    # remove linebreaks inside bullet point lists:
+    html = html.gsub("<br/><li>", "<li>")
+    html = html.gsub("<br/></ul>", "</ul>")
+
+    # remove linebreak from the end:
+    html = html.chomp("<br/>")
 
     html.html_safe # rubocop:disable Rails/OutputSafety
+    # html
   end
+
+=begin
+    # remove first two empty paragraphs:
+    if html.start_with?("<p></p>")
+      html = html.chomp("<p></p>")
+    end
+    if html.start_with?("<p></p>")
+      html = html.chomp("<p></p>")
+    end
+
+    # remove last two empty paragraphs:
+    if html.end_with?("<p></p>")
+      html = html.sub("<p></p>", "")
+    end
+    if html.end_with?("<p></p>")
+      html = html.sub("<p></p>", "")
+    end
+    # This is not needed anymore! It was part of the function above.
+=end
 
   def reformat(html)
     sanitize(html, Sanitize::Config::MASTODON_STRICT)
@@ -117,7 +176,8 @@ class Formatter
 
     rewrite(html.dup, entities) do |entity|
       if entity[:url]
-        link_to_url(entity, options)
+        entity[:url]
+        # link_to_url(entity, options)
       elsif entity[:hashtag]
         link_to_hashtag(entity)
       elsif entity[:screen_name]
@@ -250,6 +310,7 @@ class Formatter
     Extractor.remove_overlapping_entities(special + standard + extra)
   end
 
+
   def link_to_url(entity, options = {})
     url        = Addressable::URI.parse(entity[:url])
     html_attrs = { target: '_blank', rel: 'nofollow noopener noreferrer' }
@@ -260,6 +321,14 @@ class Formatter
   rescue Addressable::URI::InvalidURIError, IDN::Idna::IdnaError
     encode(entity[:url])
   end
+
+=begin
+  def link_to_url(entity, options = {})
+    entity[:url]
+  rescue Addressable::URI::InvalidURIError, IDN::Idna::IdnaError
+    encode(entity[:url])
+  end
+=end
 
   def link_to_mention(entity, linkable_accounts)
     acct = entity[:screen_name]
@@ -280,7 +349,12 @@ class Formatter
   end
 
   def link_to_hashtag(entity)
-    hashtag_html(entity[:hashtag])
+    generated_hashtag = hashtag_html(entity[:hashtag])
+    if generated_hashtag.include? "href=\"https://toot.phseiff.com/tags/"
+      hashtag_html_for_phseiff(entity[:hashtag])
+    else
+      generated_hashtag
+    end
   end
 
   def link_html(url)
@@ -291,6 +365,10 @@ class Formatter
     cutoff = url[prefix.length..-1].length > 30
 
     "<span class=\"invisible\">#{encode(prefix)}</span><span class=\"#{cutoff ? 'ellipsis' : ''}\">#{encode(text)}</span><span class=\"invisible\">#{encode(suffix)}</span>"
+  end
+
+  def hashtag_html_for_phseiff(tag)
+    "<a href=\"https://toot.phseiff.com/@phseiff/tagged/#{encode(tag)}\" class=\"mention hashtag\" rel=\"tag\">#<span>#{encode(tag)}</span></a>"
   end
 
   def hashtag_html(tag)

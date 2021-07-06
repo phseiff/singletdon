@@ -18,6 +18,7 @@ class ManifestSerializer < ActiveModel::Serializer
   end
 
   def description
+    # (object.site_short_description.presence || I18n.t('about.about_mastodon_html'))
     strip_tags(object.site_short_description.presence || I18n.t('about.about_mastodon_html'))
   end
 

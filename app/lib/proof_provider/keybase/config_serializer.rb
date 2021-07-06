@@ -30,6 +30,7 @@ class ProofProvider::Keybase::ConfigSerializer < ActiveModel::Serializer
   end
 
   def description
+    # (Setting.site_short_description.presence || I18n.t('about.about_mastodon_html'))
     strip_tags(Setting.site_short_description.presence || I18n.t('about.about_mastodon_html'))
   end
 
