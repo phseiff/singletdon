@@ -2,7 +2,7 @@
 
 Singletdon is a fork of Mastodon (specifically of [this](https://github.com/Grawl/mastodon) fork) optimized for use in single-user instances for power users, who don't hesitate to dabble into code to fix something if something breaks.
 
-It comes with a docker-compose template (as well as instructions) for including pgadmin4 into your installation to edit your posts in the database after you made them.
+It also comes with a docker-compose template (as well as instructions) for including pgadmin4 into your installation to edit your posts in the database after you made them.
 
 ## Is this maintained?
 
@@ -59,7 +59,7 @@ I marked implemented features with ✅, and not-yet-implemented ones with 🚩, 
 
   ❗ This currently only works if your username is `phseiff` (which it naturally isn't, lol), so you will need to search the code for a mention of `phseiff` with something along the lines of `tag` near it, and change that.
 
-* 🚩 **There are some more things noted in issues in this repository** (but I also use these issues for things related to my own mastodon instance specifically), and I will transcript these into the README once I fond time and motivation to do so.
+* 🚩 **There are some more things noted in issues in this repository** (but I also use these issues for things related to my own mastodon instance specifically), and I will transcript these into the README once I find time and motivation to do so.
 
 Feel free to make pull requests for things I noted I plan in the future, or ask if it's okay to make one for a different feature!
 
