@@ -55,7 +55,7 @@ I marked implemented features with ✅, and not-yet-implemented ones with 🚩, 
 
   You could potentially increase this by going through my commits and looking for the one where I changed something from 5 to 10; shouldn't be hard to locate and change this.
 
-* ✅ **Clicking on a hashtag on your instances account's frontend leads to `yourinstanceaddress/@yourusername/tagged/hashtag` rather than `yourinstanceaddress/tags/hashtag`**, which filters YOUR posts by the hashtag rather than showing all posts of any federated instances with this hashtag.
+* ✅ **Clicking on a hashtag on your instances account's frontend** leads to `yourinstanceaddress/@yourusername/tagged/hashtag` rather than `yourinstanceaddress/tags/hashtag`, which filters YOUR posts by the hashtag rather than showing all posts of any federated instances with this hashtag.
 
   ❗ This currently only works if your username is `phseiff` (which it naturally isn't, lol), so you will need to search the code for a mention of `phseiff` with something along the lines of `tag` near it, and change that.
 
@@ -65,9 +65,7 @@ Feel free to make pull requests for things I noted I plan in the future, or ask 
 
 ## How to edit the Database
 
-Here are some tips on how to edit your toots in your instance's database if you use a single-user instance.
-
-### How to use pgadmin with your database
+Here are some tips on how to edit your toots in your instance's database if you use a single-user instance, using self-hosted pgadmin4.
 
 I run mastodon with `docker-compose` and traefik, and I added a `PgAdmin4` container to it that connects to my database.<br/>
 I just have to access it, connect to the data base (the host name is `db`, the port is `5432`, and the username is `postgres`), log in with the login data specified in the docker compose file, and I can then modify my posts using the following query and modifying the fields in the table it gives me:
