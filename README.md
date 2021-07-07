@@ -36,30 +36,30 @@ Not all of these are implemented yet, and I will implement new ones whenever I n
 
 I marked implemented features with ✅, and not-yet-implemented ones with 🚩, for your convenience.
 
-* ✅ Configurable character limit:
+* ✅ **Configurable character limit**:
 
   You can increase your toot character limit to any number in `.env.production` (feature by @Graz, from whose fork this is forked).
   
-* ✅ Markdown formatting in Toots:
+* ✅ **Markdown formatting in Toots**:
 
   You can use markdown formatting (bulletpoint lists, inline code, underline, bold, cursive, links)
 
   ToDo:
   * only markdown links (the ones with a custom description text) should federate to other instances, since the other formatting instructions (bold, cursive, bulletpoint lists) aren't interpreted correctly and should better be left un-rendered for the view on other instances.
 
-* ✅ Use multiple paragraphs in your instance description (the one displayed on your public profile beneath your account description)
+* ✅ **Use multiple paragraphs in your instance description (the one displayed on your public profile beneath your account description)**:
 
   ToDo: Support full formatting like in toots, when it's displayed on the website frontend.
 
-* ✅ Up to 10 profile metadata fields (rather than the usual 5)
+* ✅ **Up to 10 profile metadata fields (rather than the usual 5)**:
 
   You could potentially increase this by going through my commits and looking for the one where I changed something from 5 to 10; shouldn't be hard to locate and change this.
 
-* ✅ Clicking on a hashtag on your instances account's frontend leads to `yourinstanceaddress/@yourusername/tagged/hashtag` rather than `yourinstanceaddress/tags/hashtag`, which filters YOUR posts by the hashtag rather than showing all posts of any federated instances with this hashtag.
+* ✅ **Clicking on a hashtag on your instances account's frontend leads to `yourinstanceaddress/@yourusername/tagged/hashtag` rather than `yourinstanceaddress/tags/hashtag`**, which filters YOUR posts by the hashtag rather than showing all posts of any federated instances with this hashtag.
 
   ❗ This currently only works if your username is `phseiff` (which it naturally isn't, lol), so you will need to search the code for a mention of `phseiff` with something along the lines of `tag` near it, and change that.
 
-* 🚩 There are some more things noted in issues in this repository (but I also use these issues for things related to my own mastodon instance specifically), and I will transcript these into the README once I fond time and motivation to do so.
+* 🚩 **There are some more things noted in issues in this repository** (but I also use these issues for things related to my own mastodon instance specifically), and I will transcript these into the README once I fond time and motivation to do so.
 
 Feel free to make pull requests for things I noted I plan in the future, or ask if it's okay to make one for a different feature!
 
