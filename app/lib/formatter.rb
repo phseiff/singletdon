@@ -37,7 +37,7 @@ class Formatter
 
     html = raw_content
     html = "RT @#{prepend_reblog} #{html}" if prepend_reblog
-    html = encode_and_link_urls(html, linkable_accounts)
+    html = encode_and_link_urls_for_toots(html, linkable_accounts)
     html = encode_custom_emojis(html, status.emojis, options[:autoplay]) if options[:custom_emojify]
 
     ###########
@@ -166,7 +166,7 @@ class Formatter
     html_entities.encode(html)
   end
 
-  def encode_and_link_urls(html, accounts = nil, options = {})
+  def encode_and_link_urls_for_toots(html, accounts = nil, options = {})
     entities = utf8_friendly_extractor(html, extract_url_without_protocol: false)
 
     if accounts.is_a?(Hash)
@@ -178,6 +178,25 @@ class Formatter
       if entity[:url]
         entity[:url]
         # link_to_url(entity, options)
+      elsif entity[:hashtag]
+        link_to_hashtag(entity)
+      elsif entity[:screen_name]
+        link_to_mention(entity, accounts)
+      end
+    end
+  end
+
+  def encode_and_link_urls(html, accounts = nil, options = {})
+    entities = utf8_friendly_extractor(html, extract_url_without_protocol: false)
+
+    if accounts.is_a?(Hash)
+      options  = accounts
+      accounts = nil
+    end
+
+    rewrite(html.dup, entities) do |entity|
+      if entity[:url]
+        link_to_url(entity, options)
       elsif entity[:hashtag]
         link_to_hashtag(entity)
       elsif entity[:screen_name]
